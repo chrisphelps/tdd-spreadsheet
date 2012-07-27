@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class PartOneSheetTest {
+public class SheetTests {
 
 	@Test
 	public void testThatCellsAreEmptyByDefault() {

@@ -49,11 +49,32 @@ public class Sheet {
 	}
 
 	private String evalExpression(String expr) {
-		if (isNumeric(expr)) {
+		if (hasParens(expr)) {
+			return evalParens(expr);
+		} else if (isNumeric(expr)) {
 			return evalNumeric(expr);
 		} else {
 			return expr;
 		}
+	}
+	
+	private boolean hasParens(String expr) {
+		if (expr.indexOf('(') != -1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	private String evalParens(String expr) {
+		// find last open paren
+		int open = expr.lastIndexOf('(');
+		// find closing paren
+		int close = open + 1;
+		while (expr.charAt(close) != ')') { close++; }
+		String subexpr = expr.substring(open + 1, close);
+		String evalsub = evalExpression(subexpr);
+		return evalExpression(expr.substring(0,open) + evalsub + expr.substring(close + 1));
 	}
 	
 	private boolean isNumeric(String value) {

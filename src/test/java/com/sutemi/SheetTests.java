@@ -97,14 +97,14 @@ public class SheetTests {
 		assertEquals("Value", "7", sheet.get("A1"));
 	}
 
-	//@Test
+	@Test
 	public void testParentheses() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=(7)");
 		assertEquals("Parens", "7", sheet.get("A1"));
 	}
 	
-	// also happened for free by parseInt
+	@Test
 	public void testDeepParentheses() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=((((10))))");

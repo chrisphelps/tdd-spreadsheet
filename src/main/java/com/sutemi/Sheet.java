@@ -25,13 +25,29 @@ public class Sheet {
 	}
 
 	private String evaluate(String value) {
-		if (isNumeric(value)) {
+		if (value == null || value.equals("")) {
+			return "";
+		} else if (isNumeric(value)) {
 			return value.trim();
+		} else if (isFormula(value)) {
+			return evalFormula(value);
 		} else {
 			return value;
 		}
 	}
+
+	private boolean isFormula(String value) {
+		if (value == null || value.equals("")) {
+			return false;
+		} else {
+			return value.charAt(0) == '=';
+		}
+	}
 	
+	private String evalFormula(String formula) {
+		return evaluate (formula.substring(1));
+	}
+
 	private boolean isNumeric(String value) {
 		try {
 			Integer.parseInt(value.trim());

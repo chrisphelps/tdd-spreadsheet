@@ -81,6 +81,7 @@ public class SheetTests {
 	 *******************************
 	 */
 	
+	@Test
 	public void testFormulaSpec() {
 		Sheet sheet = new Sheet();
 		sheet.put("B1", " =7"); // note leading space
@@ -88,10 +89,31 @@ public class SheetTests {
 		assertEquals("Unchanged", " =7", sheet.getLiteral("B1"));
 	}
 	
+	@Test
 	public void testConstantFormula() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=7");
 		assertEquals("Formula", "=7", sheet.getLiteral("A1"));
 		assertEquals("Value", "7", sheet.get("A1"));
+	}
+
+	// for now these work "for free" by parseInt
+	public void testParentheses() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=(7)");
+		assertEquals("Parends", "7", sheet.get("A1"));
+	}
+	
+	// also happened for free by parseInt
+	public void testDeepParentheses() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=((((10))))");
+		assertEquals("Parends", "10", sheet.get("A1"));
+	}
+	
+	public void testMultiply() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=2*3*4");
+		assertEquals("Times", "24", sheet.get("A1"));
 	}
 }

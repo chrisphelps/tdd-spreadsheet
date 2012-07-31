@@ -27,10 +27,10 @@ public class Sheet {
 	private String evaluate(String value) {
 		if (value == null || value.equals("")) {
 			return "";
-		} else if (isNumeric(value)) {
-			return value.trim();
 		} else if (isFormula(value)) {
 			return evalFormula(value);
+		} else if (isNumeric(value)) {
+			return evalNumeric(value);
 		} else {
 			return value;
 		}
@@ -45,9 +45,17 @@ public class Sheet {
 	}
 	
 	private String evalFormula(String formula) {
-		return evaluate (formula.substring(1));
+		return evalExpression(formula.substring(1));
 	}
 
+	private String evalExpression(String expr) {
+		if (isNumeric(expr)) {
+			return evalNumeric(expr);
+		} else {
+			return expr;
+		}
+	}
+	
 	private boolean isNumeric(String value) {
 		try {
 			Integer.parseInt(value.trim());
@@ -55,6 +63,10 @@ public class Sheet {
 			return false;
 		}
 		return true;
+	}
+	
+	private String evalNumeric(String value) {
+		return value.trim();
 	}
 
 }

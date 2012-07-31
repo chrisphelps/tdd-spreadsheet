@@ -97,18 +97,18 @@ public class SheetTests {
 		assertEquals("Value", "7", sheet.get("A1"));
 	}
 
-	// for now these work "for free" by parseInt
+	//@Test
 	public void testParentheses() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=(7)");
-		assertEquals("Parends", "7", sheet.get("A1"));
+		assertEquals("Parens", "7", sheet.get("A1"));
 	}
 	
 	// also happened for free by parseInt
 	public void testDeepParentheses() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=((((10))))");
-		assertEquals("Parends", "10", sheet.get("A1"));
+		assertEquals("Parens", "10", sheet.get("A1"));
 	}
 	
 	public void testMultiply() {

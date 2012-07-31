@@ -74,4 +74,24 @@ public class SheetTests {
 		sheet.put(theCell, "=7"); // foreshadowing formulas
 		assertEquals("=7", sheet.getLiteral(theCell));
 	}
+	
+	
+	/*******************************
+	 * Challenge 2 tests start here
+	 *******************************
+	 */
+	
+	public void testFormulaSpec() {
+		Sheet sheet = new Sheet();
+		sheet.put("B1", " =7"); // note leading space
+		assertEquals("Not a formula", " =7", sheet.get("B1"));
+		assertEquals("Unchanged", " =7", sheet.getLiteral("B1"));
+	}
+	
+	public void testConstantFormula() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=7");
+		assertEquals("Formula", "=7", sheet.getLiteral("A1"));
+		assertEquals("Value", "7", sheet.get("A1"));
+	}
 }

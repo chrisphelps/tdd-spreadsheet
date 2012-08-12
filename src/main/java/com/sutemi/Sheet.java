@@ -1,6 +1,8 @@
 package com.sutemi;
 
 import java.util.HashMap;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Sheet {
 
@@ -49,15 +51,31 @@ public class Sheet {
 	}
 
 	private String evalExpression(String expr) {
-		if (hasParens(expr)) {
-			return evalParens(expr);
-		} else if (hasMultiplication(expr)) {
-			return evalMultiplication(expr);
-		} else if (isNumeric(expr)) {
-			return evalNumeric(expr);
-		} else {
-			return expr;
+		Stack<String> opStack = new Stack<String>();
+		Stack<String> valueStack = new Stack<String>();
+		StringTokenizer strtok = new StringTokenizer(expr, "()", true);
+		
+		while (strtok.hasMoreTokens()) {
+			String token = strtok.nextToken();
+			
+			if (token.equals("(")) {
+				opStack.push("(");
+			} else if (token.equals(")")) {
+				opStack.pop();
+			} else if (isNumeric(token)) {
+				valueStack.push(evalNumeric(token));
+			}
 		}
+		return valueStack.pop();
+//		if (hasParens(expr)) {
+//			return evalParens(expr);
+//		} else if (hasMultiplication(expr)) {
+//			return evalMultiplication(expr);
+//		} else if (isNumeric(expr)) {
+//			return evalNumeric(expr);
+//		} else {
+//			return expr;
+//		}
 	}
 	
 	private String evalMultiplication(String expr) {

@@ -111,11 +111,32 @@ public class SheetTests {
 		assertEquals("Parens", "10", sheet.get("A1"));
 	}
 	
+	
+	@Test
+	public void testMultiply() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=2*3");
+		assertEquals("Times", "6", sheet.get("A1"));
+	}
+	
+	@Test
+	public void testMultiplyWithParens() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=(2*3)");
+		assertEquals("Times", "6", sheet.get("A1"));
+	}
+	
+	
+	// paren error cases:
+	// 1. too many left parens
+	// 2. too many right parens
+	
+	
 //	@Test
-//	public void testMultiply() {
+//	public void testParenthesisError() {
 //		Sheet sheet = new Sheet();
-//		sheet.put("A1", "=2*3");
-//		assertEquals("Times", "6", sheet.get("A1"));
+//		sheet.put("A1",	"=(((((7))");
+//		assertEquals("Error", "#Error", sheet.get("A1"));
 //	}
 	
 //	@Test

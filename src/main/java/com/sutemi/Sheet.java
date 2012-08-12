@@ -53,7 +53,7 @@ public class Sheet {
 	private String evalExpression(String expr) {
 		Stack<String> opStack = new Stack<String>();
 		Stack<String> valueStack = new Stack<String>();
-		StringTokenizer strtok = new StringTokenizer(expr, "()", true);
+		StringTokenizer strtok = new StringTokenizer(expr, "()*", true);
 		
 		while (strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
@@ -61,25 +61,48 @@ public class Sheet {
 			if (token.equals("(")) {
 				opStack.push("(");
 			} else if (token.equals(")")) {
-				opStack.pop();
+				String op = opStack.pop();
+				while(!op.equals("(")) {
+					if (op.equals("*")) {
+						String rhs = valueStack.pop();
+						String lhs = valueStack.pop();
+						valueStack.push(evalMultiplication(lhs,rhs));
+					}
+					op = opStack.pop();
+				}
+				
+				
+				
+				if (!op.equals("(")) {
+					return "#Error";
+				}
+			} else if (token.equals("*")) {
+				opStack.push("*");
 			} else if (isNumeric(token)) {
 				valueStack.push(evalNumeric(token));
 			}
 		}
+		
+		while (!opStack.isEmpty()) {
+			String op = opStack.pop();
+			if (op.equals("*")) {
+				String rhs = valueStack.pop();
+				String lhs = valueStack.pop();
+				valueStack.push(evalMultiplication(lhs,rhs));
+			}
+		}
 		return valueStack.pop();
-//		if (hasParens(expr)) {
-//			return evalParens(expr);
-//		} else if (hasMultiplication(expr)) {
-//			return evalMultiplication(expr);
-//		} else if (isNumeric(expr)) {
-//			return evalNumeric(expr);
-//		} else {
-//			return expr;
-//		}
 	}
 	
-	private String evalMultiplication(String expr) {
-		return "6";
+	private String evalMultiplication(String lhs, String rhs) {
+		try {
+			int intlhs = Integer.parseInt(lhs);
+			int intrhs = Integer.parseInt(rhs);
+			int prod = intlhs * intrhs;
+			return new Integer(prod).toString();
+		} catch (NumberFormatException nfe) {
+			return "#Error";
+		}
 	}
 
 	private boolean hasMultiplication(String expr) {

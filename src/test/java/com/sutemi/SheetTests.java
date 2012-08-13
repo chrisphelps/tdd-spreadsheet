@@ -120,10 +120,24 @@ public class SheetTests {
 	}
 	
 	@Test
+	public void testMultiplySeveral() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=2*3*4");
+		assertEquals("Times", "24", sheet.get("A1"));
+	}
+	
+	@Test
 	public void testMultiplyWithParens() {
 		Sheet sheet = new Sheet();
 		sheet.put("A1", "=(2*3)");
 		assertEquals("Times", "6", sheet.get("A1"));
+	}
+	
+	@Test
+	public void testAdd() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=71+2+3");
+		assertEquals("Add", "76", sheet.get("A1"));
 	}
 	
 	

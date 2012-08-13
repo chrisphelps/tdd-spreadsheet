@@ -53,7 +53,7 @@ public class Sheet {
 	private String evalExpression(String expr) {
 		Stack<String> opStack = new Stack<String>();
 		Stack<String> valueStack = new Stack<String>();
-		StringTokenizer strtok = new StringTokenizer(expr, "()*", true);
+		StringTokenizer strtok = new StringTokenizer(expr, "()*+", true);
 		
 		while (strtok.hasMoreTokens()) {
 			String token = strtok.nextToken();
@@ -68,6 +68,11 @@ public class Sheet {
 						String lhs = valueStack.pop();
 						valueStack.push(evalMultiplication(lhs,rhs));
 					}
+					else if (op.equals("+")) {
+						String rhs = valueStack.pop();
+						String lhs = valueStack.pop();
+						valueStack.push(evalAddition(lhs,rhs));
+					}
 					op = opStack.pop();
 				}
 				
@@ -78,6 +83,8 @@ public class Sheet {
 				}
 			} else if (token.equals("*")) {
 				opStack.push("*");
+			} else if (token.equals("+")) {
+				opStack.push("+");
 			} else if (isNumeric(token)) {
 				valueStack.push(evalNumeric(token));
 			}
@@ -89,6 +96,11 @@ public class Sheet {
 				String rhs = valueStack.pop();
 				String lhs = valueStack.pop();
 				valueStack.push(evalMultiplication(lhs,rhs));
+			}
+			else if (op.equals("+")) {
+				String rhs = valueStack.pop();
+				String lhs = valueStack.pop();
+				valueStack.push(evalAddition(lhs,rhs));
 			}
 		}
 		return valueStack.pop();
@@ -105,6 +117,17 @@ public class Sheet {
 		}
 	}
 
+	private String evalAddition(String lhs, String rhs) {
+		try {
+			int intlhs = Integer.parseInt(lhs);
+			int intrhs = Integer.parseInt(rhs);
+			int prod = intlhs + intrhs;
+			return new Integer(prod).toString();
+		} catch (NumberFormatException nfe) {
+			return "#Error";
+		}
+	}
+	
 	private boolean hasMultiplication(String expr) {
 		if (expr.indexOf('*') != -1) {
 			return true;

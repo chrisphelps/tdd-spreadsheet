@@ -154,6 +154,13 @@ public class SheetTests {
 		assertEquals("Precedence", "17", sheet.get("A1"));
 	}
 	
+	@Test
+	public void testFullExpression() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=7*(2+3)*((((2+1))))");
+		assertEquals("Expr", "105", sheet.get("A1"));
+	}
+	
 	// paren error cases:
 	// 1. too many left parens
 	// 2. too many right parens

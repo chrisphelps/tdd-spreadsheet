@@ -107,14 +107,10 @@ public class Sheet {
 				return;
 			}
 			if (op.equals("*")) {
-				Integer rhs = valueStack.pop();
-				Integer lhs = valueStack.pop();
-				valueStack.push(evalMultiplication(lhs,rhs));
+				valueStack.push(evalMultiplication(valueStack));
 			}
 			else if (op.equals("+")) {
-				Integer rhs = valueStack.pop();
-				Integer lhs = valueStack.pop();
-				valueStack.push(evalAddition(lhs,rhs));
+				valueStack.push(evalAddition(valueStack));
 			}
 		}
 	}
@@ -127,15 +123,11 @@ public class Sheet {
 				if (nextOp.equals("(")) {
 					return;
 				} else if (nextOp.equals("*")) {
-					Integer rhs = valueStack.pop();
-					Integer lhs = valueStack.pop();
 					opStack.pop();
-					valueStack.push(evalMultiplication(lhs,rhs));
+					valueStack.push(evalMultiplication(valueStack));
 				} else if (nextOp.equals("+")) {
-					Integer rhs = valueStack.pop();
-					Integer lhs = valueStack.pop();
 					opStack.pop();
-					valueStack.push(evalAddition(lhs,rhs));
+					valueStack.push(evalAddition(valueStack));
 				}
 			} else {
 				return;
@@ -143,12 +135,16 @@ public class Sheet {
 		}
 	}
 	
-	private Integer evalMultiplication(Integer lhs, Integer rhs) {
+	private Integer evalMultiplication(Stack<Integer> valueStack) {
+		Integer rhs = valueStack.pop();
+		Integer lhs = valueStack.pop();
 		int prod = lhs.intValue() * rhs.intValue();
 		return new Integer(prod);
 	}
 
-	private Integer evalAddition(Integer lhs, Integer rhs) {
+	private Integer evalAddition(Stack<Integer> valueStack) {
+		Integer rhs = valueStack.pop();
+		Integer lhs = valueStack.pop();
 		int prod = lhs.intValue() + rhs.intValue();
 		return new Integer(prod);
 	}

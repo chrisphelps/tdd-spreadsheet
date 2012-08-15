@@ -65,9 +65,7 @@ public class Sheet {
 			} else if (token.equals("*")) {
 				opStack.push("*");
 			} else if (token.equals("+")) {
-				if (isPrecedenceLowerThanStack("+", opStack)) {
-					processStackWhileLowerPrecedence("+", opStack, valueStack);
-				} 
+				processStackWhileLowerPrecedence("+", opStack, valueStack);
 				opStack.push("+");
 			} else if (isNumeric(token)) {
 				valueStack.push(evalNumeric(token));
@@ -76,21 +74,6 @@ public class Sheet {
 		
 		processStack(opStack, valueStack);
 		return valueStack.pop().toString();
-	}
-
-	private boolean isPrecedenceLowerThanStack(String op, Stack<String> opStack) {
-		if (opStack.isEmpty()) {
-			return true;
-		} else {
-			String nextOp = opStack.peek();
-			int nextPrecedence = getOperatorPrecedence(nextOp);
-			int thisPrecedence = getOperatorPrecedence(op);
-			if (thisPrecedence < nextPrecedence) {
-				return true;
-			} else {
-				return false;
-			}
-		}
 	}
 
 	private int getOperatorPrecedence(String op) {

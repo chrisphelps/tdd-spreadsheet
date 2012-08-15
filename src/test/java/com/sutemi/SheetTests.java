@@ -140,6 +140,19 @@ public class SheetTests {
 		assertEquals("Add", "76", sheet.get("A1"));
 	}
 	
+	@Test
+	public void testPrecedenceInOrder() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=7+2*3");
+		assertEquals("Precedence", "13", sheet.get("A1"));
+	}
+	
+	@Test
+	public void testPrecedenceOutOfOrder() {
+		Sheet sheet = new Sheet();
+		sheet.put("A1", "=7*2+3");
+		assertEquals("Precedence", "17", sheet.get("A1"));
+	}
 	
 	// paren error cases:
 	// 1. too many left parens

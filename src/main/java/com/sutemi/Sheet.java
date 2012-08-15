@@ -32,7 +32,7 @@ public class Sheet {
 		} else if (isFormula(value)) {
 			return evalFormula(value);
 		} else if (isNumeric(value)) {
-			return evalNumeric(value);
+			return evalNumeric(value).toString();
 		} else {
 			return value;
 		}
@@ -52,7 +52,7 @@ public class Sheet {
 
 	private String evalExpression(String expr) {
 		Stack<String> opStack = new Stack<String>();
-		Stack<String> valueStack = new Stack<String>();
+		Stack<Integer> valueStack = new Stack<Integer>();
 		StringTokenizer strtok = new StringTokenizer(expr, "()*+", true);
 		
 		while (strtok.hasMoreTokens()) {
@@ -61,71 +61,96 @@ public class Sheet {
 			if (token.equals("(")) {
 				opStack.push("(");
 			} else if (token.equals(")")) {
-				String op = opStack.pop();
-				while(!op.equals("(")) {
-					if (op.equals("*")) {
-						String rhs = valueStack.pop();
-						String lhs = valueStack.pop();
-						valueStack.push(evalMultiplication(lhs,rhs));
-					}
-					else if (op.equals("+")) {
-						String rhs = valueStack.pop();
-						String lhs = valueStack.pop();
-						valueStack.push(evalAddition(lhs,rhs));
-					}
-					op = opStack.pop();
-				}
-				
-				
-				
-				if (!op.equals("(")) {
-					return "#Error";
-				}
+				processStack(opStack, valueStack);
 			} else if (token.equals("*")) {
 				opStack.push("*");
 			} else if (token.equals("+")) {
+				if (isPrecedenceLowerThanStack("+", opStack)) {
+					processStackWhileLowerPrecedence("+", opStack, valueStack);
+				} 
 				opStack.push("+");
 			} else if (isNumeric(token)) {
 				valueStack.push(evalNumeric(token));
 			}
 		}
 		
-		while (!opStack.isEmpty()) {
-			String op = opStack.pop();
-			if (op.equals("*")) {
-				String rhs = valueStack.pop();
-				String lhs = valueStack.pop();
-				valueStack.push(evalMultiplication(lhs,rhs));
-			}
-			else if (op.equals("+")) {
-				String rhs = valueStack.pop();
-				String lhs = valueStack.pop();
-				valueStack.push(evalAddition(lhs,rhs));
-			}
-		}
-		return valueStack.pop();
+		processStack(opStack, valueStack);
+		return valueStack.pop().toString();
 	}
-	
-	private String evalMultiplication(String lhs, String rhs) {
-		try {
-			int intlhs = Integer.parseInt(lhs);
-			int intrhs = Integer.parseInt(rhs);
-			int prod = intlhs * intrhs;
-			return new Integer(prod).toString();
-		} catch (NumberFormatException nfe) {
-			return "#Error";
+
+	private boolean isPrecedenceLowerThanStack(String op, Stack<String> opStack) {
+		if (opStack.isEmpty()) {
+			return true;
+		} else {
+			String nextOp = opStack.peek();
+			int nextPrecedence = getOperatorPrecedence(nextOp);
+			int thisPrecedence = getOperatorPrecedence(op);
+			if (thisPrecedence < nextPrecedence) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
-	private String evalAddition(String lhs, String rhs) {
-		try {
-			int intlhs = Integer.parseInt(lhs);
-			int intrhs = Integer.parseInt(rhs);
-			int prod = intlhs + intrhs;
-			return new Integer(prod).toString();
-		} catch (NumberFormatException nfe) {
-			return "#Error";
+	private int getOperatorPrecedence(String op) {
+		if (op.equals("+")) return 1;
+		if (op.equals("*")) return 2;
+		if (op.equals("(")) return 3;
+		return 0;
+	}
+		
+	private void processStack(Stack<String> opStack, Stack<Integer> valueStack) {
+		while (!opStack.isEmpty()) {
+			String op = opStack.pop();
+			if (op.equals("(")) {
+				return;
+			}
+			if (op.equals("*")) {
+				Integer rhs = valueStack.pop();
+				Integer lhs = valueStack.pop();
+				valueStack.push(evalMultiplication(lhs,rhs));
+			}
+			else if (op.equals("+")) {
+				Integer rhs = valueStack.pop();
+				Integer lhs = valueStack.pop();
+				valueStack.push(evalAddition(lhs,rhs));
+			}
 		}
+	}
+	
+	private void processStackWhileLowerPrecedence(String op, Stack<String> opStack, Stack<Integer> valueStack) {
+		while (!opStack.isEmpty()) {
+			String nextOp = opStack.peek();
+			
+			if (getOperatorPrecedence(op) < getOperatorPrecedence(nextOp)) {
+				if (nextOp.equals("(")) {
+					return;
+				} else if (nextOp.equals("*")) {
+					Integer rhs = valueStack.pop();
+					Integer lhs = valueStack.pop();
+					opStack.pop();
+					valueStack.push(evalMultiplication(lhs,rhs));
+				} else if (nextOp.equals("+")) {
+					Integer rhs = valueStack.pop();
+					Integer lhs = valueStack.pop();
+					opStack.pop();
+					valueStack.push(evalAddition(lhs,rhs));
+				}
+			} else {
+				return;
+			}
+		}
+	}
+	
+	private Integer evalMultiplication(Integer lhs, Integer rhs) {
+		int prod = lhs.intValue() * rhs.intValue();
+		return new Integer(prod);
+	}
+
+	private Integer evalAddition(Integer lhs, Integer rhs) {
+		int prod = lhs.intValue() + rhs.intValue();
+		return new Integer(prod);
 	}
 	
 	private boolean isNumeric(String value) {
@@ -137,8 +162,12 @@ public class Sheet {
 		return true;
 	}
 	
-	private String evalNumeric(String value) {
-		return value.trim();
+	private Integer evalNumeric(String value) {
+		try {
+			return Integer.parseInt(value.trim());
+		} catch (NumberFormatException ex) {
+			return null;
+		}
 	}
 
 }
